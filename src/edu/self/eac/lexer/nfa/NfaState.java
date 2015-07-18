@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * Created by »Ô on 2015/7/18.
+ * Created by ï¿½ï¿½ on 2015/7/18.
  * Comments: NFA state
  */
 public class NfaState {
@@ -23,6 +23,10 @@ public class NfaState {
     public boolean addOutEdge(NfaEdge edge){
         if(_outEdges.contains(edge)) return false;
         return _outEdges.add(edge);
+    }
+
+    public NfaStateType getType() {
+        return _type;
     }
 
     private String _id;
