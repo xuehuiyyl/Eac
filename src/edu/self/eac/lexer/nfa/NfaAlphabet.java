@@ -2,6 +2,7 @@ package edu.self.eac.lexer.nfa;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by »Ô on 2015/7/18.
@@ -9,41 +10,55 @@ import java.util.Objects;
  */
 public class NfaAlphabet {
     /**
-     * @param name NFA alphabet name
+     * @param name  NFA alphabet name
      * @param value NFA alphabet content
      * @return NFA alphabet
      */
-    public static NfaAlphabet CreateAlphabet(String name, char[] value){
-        if(name == null || value == null || value.length == 0) return null;
+    public static NfaAlphabet CreateAlphabet(String name, char[] value) {
+        if (name == null || value == null || value.length == 0) return null;
         return new NfaAlphabet(name, value);
     }
 
     /**
-     * @param name NFA alphabet name
+     * @param name         NFA alphabet name
      * @param reDefinition Regular expression string
      * @return NFA alphabet
      */
-    public static NfaAlphabet CreateAlphabet(String name, String reDefinition){
-        if(name == null || reDefinition == null) return null;
-        if(Objects.equals(reDefinition, "[a-z]"))
-            return UpperLetters;
-        if(Objects.equals(reDefinition, "[A-Z]"))
-            return LowerLetters;
-        if(Objects.equals(reDefinition, "[a-zA-Z]"))
-            return Letters;
-        if(Objects.equals(reDefinition, "[_a-z]"))
-            return _UpperLetters;
-        if(Objects.equals(reDefinition, "[_A-Z]"))
-            return _LowerLetters;
-        if(Objects.equals(reDefinition, "[_a-zA-Z]"))
-            return _Letters;
-        if(Objects.equals(reDefinition, "[0-9]"))
-            return Digit;
+    public static NfaAlphabet CreateAlphabet(String name, String reDefinition) {
+        if (name == null || reDefinition == null) return null;
         return new NfaAlphabet(name, reDefinition);
     }
 
-    public String getName(){
+    /**
+     * @param reDefinition Regular expression string
+     * @return NFA alphabet
+     */
+    public static NfaAlphabet CreateAlphabet(String reDefinition) {
+        if (reDefinition == null) return null;
+        if (Objects.equals(reDefinition, "[a-z]"))
+            return UpperLetters;
+        if (Objects.equals(reDefinition, "[A-Z]"))
+            return LowerLetters;
+        if (Objects.equals(reDefinition, "[a-zA-Z]"))
+            return Letters;
+        if (Objects.equals(reDefinition, "[_a-z]"))
+            return _UpperLetters;
+        if (Objects.equals(reDefinition, "[_A-Z]"))
+            return _LowerLetters;
+        if (Objects.equals(reDefinition, "[_a-zA-Z]"))
+            return _Letters;
+        if (Objects.equals(reDefinition, "[0-9]"))
+            return Digit;
+        UUID uuid = UUID.randomUUID();
+        return new NfaAlphabet(uuid.toString(), reDefinition);
+    }
+
+    public String getName() {
         return _name;
+    }
+
+    public void setName(String name) {
+        _name = name;
     }
 
     public String getText() {
@@ -54,13 +69,13 @@ public class NfaAlphabet {
      * @param alpha NFA alpha
      * @return whether alphabet contains alpha passed by param
      */
-    public boolean isMember(char alpha){
+    public boolean isMember(char alpha) {
         return _value.contains(alpha);
     }
 
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < _value.size(); ++i){
+        for (int i = 0; i < _value.size(); ++i) {
             sb.append(String.valueOf(_value.toArray()[i]));
         }
         sb.append("]");
@@ -68,15 +83,15 @@ public class NfaAlphabet {
     }
 
     public static NfaAlphabet
-            UpperLetters = new NfaAlphabet("upperletter","[a-z]"),
-            LowerLetters = new NfaAlphabet("lowerletter","[A-Z]"),
-            Letters = new NfaAlphabet("letter","[a-zA-Z]"),
-            _UpperLetters = new NfaAlphabet("_upperletter","[_a-z]"),
-            _LowerLetters = new NfaAlphabet("_lowerletter","[_A-Z]"),
-            _Letters = new NfaAlphabet("_letter","[_a-zA-Z]"),
-            Digit = new NfaAlphabet("digit","[0-9]");
+            UpperLetters = new NfaAlphabet("uletter", "[a-z]"),
+            LowerLetters = new NfaAlphabet("lletter", "[A-Z]"),
+            Letters = new NfaAlphabet("letter", "[a-zA-Z]"),
+            _UpperLetters = new NfaAlphabet("_uletter", "[_a-z]"),
+            _LowerLetters = new NfaAlphabet("_lletter", "[_A-Z]"),
+            _Letters = new NfaAlphabet("_letter", "[_a-zA-Z]"),
+            Digit = new NfaAlphabet("digit", "[0-9]");
 
-    private NfaAlphabet(String name, char[] value){
+    private NfaAlphabet(String name, char[] value) {
         _name = name;
         _initWithCharArray(value);
         _text = toString();
@@ -97,7 +112,7 @@ public class NfaAlphabet {
 
     private void _initWithReDefinition(String reDefinition) {
         _value = new HashSet<>();
-        if(reDefinition.contains("a-z")){
+        if (reDefinition.contains("a-z")) {
             _value.add('a');
             _value.add('b');
             _value.add('c');
@@ -125,7 +140,7 @@ public class NfaAlphabet {
             _value.add('y');
             _value.add('z');
         }
-        else if(reDefinition.contains("A-Z")){
+        if (reDefinition.contains("A-Z")) {
             _value.add('A');
             _value.add('B');
             _value.add('C');
@@ -153,7 +168,7 @@ public class NfaAlphabet {
             _value.add('Y');
             _value.add('Z');
         }
-        else if(reDefinition.contains("0-9") || reDefinition.contains("9-0")){
+        if (reDefinition.contains("0-9") || reDefinition.contains("9-0")) {
             _value.add('0');
             _value.add('1');
             _value.add('2');
@@ -165,15 +180,13 @@ public class NfaAlphabet {
             _value.add('8');
             _value.add('9');
         }
-        else if(reDefinition.contains("_")){
+        if (reDefinition.contains("_")) {
             _value.add('_');
         }
-        else{
-            for(int i = 0; i < reDefinition.length(); ++i) {
-                char c = reDefinition.charAt(i);
-                if(!_value.contains(c))
-                    _value.add(c);
-            }
+        for (int i = 0; i < reDefinition.length(); ++i) {
+            char c = reDefinition.charAt(i);
+            if (!_value.contains(c))
+                _value.add(c);
         }
     }
 
