@@ -1,13 +1,12 @@
 package edu.self.eac.lexer.nfa;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 
 /**
  * Created by �� on 2015/7/18.
  */
-public class Nfa {
-    public Nfa(){
+public class NfaPattern implements INfaNode {
+    public NfaPattern(){
         _stateSet = new HashSet<>();
         _finalStateSet = new HashSet<>();
     }
@@ -34,6 +33,14 @@ public class Nfa {
 
     public HashSet<NfaState> getStateSet() {
         return _stateSet;
+    }
+
+    public NfaNodeType getType() {
+        return NfaNodeType.Pattern;
+    }
+
+    public String getText() {
+        return null;
     }
 
     private NfaState _initialState;
