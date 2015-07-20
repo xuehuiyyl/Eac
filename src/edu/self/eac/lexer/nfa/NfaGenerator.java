@@ -21,7 +21,8 @@ public class NfaGenerator {
 
     public NfaPattern parseLine(String reDifinition) {
         if (reDifinition == null || reDifinition.trim().isEmpty()) return null;
-        int firstBlankIndex;
+
+        int firstBlankIndex = 0;
         for (int i = 0; i < reDifinition.length(); ++i){
             if (reDifinition.charAt(i) != ' ')
                 continue;
@@ -32,6 +33,42 @@ public class NfaGenerator {
         String body = reDifinition.substring(firstBlankIndex + 1);
         if (name.isEmpty() || body.isEmpty()) return null;
 
+        _matchStack.clear();
+        _initMatchTable();
+
+        int index = 0;
+        int length = body.length();
+        boolean inbracket = false;
+        char c = body.charAt(index);
+        while (index < length) {
+            if (Character.isLetter(c)) {
+
+            }
+            else if (Character.isDigit(c)) {
+
+            }
+            else if (c == '(') {
+
+            }
+            else if (c == ')') {
+
+            }
+            else if (c == '*' || c == '+' || c == '?') {
+
+            }
+            else if (c == '|') {
+
+            }
+            else if (c == '\\') {
+
+            }
+            else if (c == '[') {
+
+            }
+            else if (c == '{') {
+
+            }
+        }
 
         return null;
     }
@@ -40,41 +77,60 @@ public class NfaGenerator {
         return null;
     }
 
-    private boolean match(INfaNode node){
-        if (node.getType() == NfaNodeType.Pattern) {
-
+    private void match(INfaNode node){
+        if (node.getNodeType() == NfaNodeType.Pattern) {//要改！！！，入栈+1，出栈匹配成功后改行各-1
+            if (_matchTable[3][0] == _matchTable[3][1] + 1 && _matchTable[3][1] == _matchTable[3][2])
+                _matchTable[3][1] += 1;
+            if (_matchTable[2][0] == 0 && _matchTable[2][1] == 0)
+                _matchTable[2][0] = 1;
+            if (_matchTable[1][0] == 0 && _matchTable[1][1] == 0)
+                _matchTable[1][0] = 1;
+            if (_matchTable[1][0] == 1 && _matchTable[1][1] == 0)
+                _matchTable[1][1] = 1;
+            if (_matchTable[0][0] == 0 && _matchTable[0][1] == 0 && _matchTable[0][2] == 0)
+                _matchTable[0][0] = 1;
+            if (_matchTable[0][0] == 1 && _matchTable[0][1] == 1 && _matchTable[0][2] == 0)
+                _matchTable[0][2] = 1;
         }
-        else if(node.getType() == NfaNodeType.Operator) {
-            String text = node.getText();
+        else if(node.getNodeType() == NfaNodeType.Operator) {
+            String text = node.getNodeText();
             if (text.equals("(") && _matchTable[3][0] == 0) {
-                _matchTable[3][0] == 1;
-                return false;
+                _matchTable[3][0] = 1;
             }
             else if(text.equals(")") && _matchTable[3][0] == 1 && _matchTable[3][1] == 1 && _matchTable[3][2] == 0) {
-                _matchTable[3][2] == 1;
-                return true;
+                _matchTable[3][2] = 1;
             }
             else if ((text.equals("*") || text.equals("+") || text.equals("?")) && _matchTable[2][0] == 1) {
                 _matchTable[2][1] = 1;
-                return true;
             }
-            else if (text.equals("|") && _matchTable[0][0] == 1 && _matchTable[0][1] == 0 && _matchTable == [0][2]) {
+            else if (text.equals("|") && _matchTable[0][0] == 1 && _matchTable[0][1] == 0 && _matchTable[0][2] == 0) {
                 _matchTable[0][1] = 1;
-                return true;
             }
         }
     }
 
+    private NfaPatternType getPatternType() {
+        if (_matchTable[3][0] == 1 && _matchTable[3][1] == 1 && _matchTable[3][2] == 1) return NfaPatternType.Bracket;
+        else if (_matchTable[2][0] == 1 && _matchTable[2][1] == 1) return NfaPatternType.Closure;
+        else if (_matchTable[1][0] == 1 && _matchTable[1][1] == 1) return NfaPatternType.Join;
+        else if (_matchTable[0][0] == 1 && _matchTable[0][1] == 1 && _matchTable[0][2] == 1) return NfaPatternType.Select;
+        else return NfaPatternType.Alpha;
+    }
+
     private void _initMatchTable() {
+        //Σ|Σ select
         _matchTable[0][0] = 0;
         _matchTable[0][1] = 0;
         _matchTable[0][2] = 0;
+        //ΣΣ or Σ·Σ join
         _matchTable[1][0] = 0;
         _matchTable[1][1] = 0;
         _matchTable[1][2] = -1;
+        //Σ* or Σ? or Σ+ closure
         _matchTable[2][0] = 0;
         _matchTable[2][1] = 0;
         _matchTable[2][2] = -1;
+        //(Σ) bracket
         _matchTable[3][0] = 0;
         _matchTable[3][1] = 0;
         _matchTable[3][2] = 0;

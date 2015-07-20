@@ -6,7 +6,9 @@ import java.util.HashSet;
  * Created by �� on 2015/7/18.
  */
 public class NfaPattern implements INfaNode {
-    public NfaPattern(){
+    public NfaPattern(String text, NfaPatternType type){
+        _text = text;
+        _type = type;
         _stateSet = new HashSet<>();
         _finalStateSet = new HashSet<>();
     }
@@ -35,14 +37,47 @@ public class NfaPattern implements INfaNode {
         return _stateSet;
     }
 
-    public NfaNodeType getType() {
+    public NfaNodeType getNodeType() {
         return NfaNodeType.Pattern;
     }
 
-    public String getText() {
-        return null;
+    public String getNodeText() {
+        return _text;
     }
 
+    public NfaPatternType getType() {
+        return _type;
+    }
+
+    public NfaPattern getLeftChildPattern() {
+        return _leftChildPattern;
+    }
+
+    public void setLeftChildPattern(NfaPattern pattern) {
+        _leftChildPattern = pattern;
+    }
+
+    public NfaPattern getRightChildPattern() {
+        return _rightChildPattern;
+    }
+
+    public void setRightChildPattern(NfaPattern pattern) {
+        _rightChildPattern = pattern;
+    }
+
+    public NfaOperator getOperator() {
+        return _operator;
+    }
+
+    public void setOperator(NfaOperator operator) {
+        _operator = operator;
+    }
+
+    private String _text;
+    private NfaPatternType _type;
+    private NfaPattern _leftChildPattern;
+    private NfaPattern _rightChildPattern;
+    private NfaOperator _operator;
     private NfaState _initialState;
     private HashSet<NfaState> _stateSet;
     //private HashSet<NfaAlphabet> _alphabetSet;

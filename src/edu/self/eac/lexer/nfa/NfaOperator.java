@@ -8,11 +8,11 @@ public class NfaOperator implements INfaNode {
         _text = text;
     }
 
-    public NfaNodeType getType() {
+    public NfaNodeType getNodeType() {
         return NfaNodeType.Operator;
     }
 
-    public String getText() {
+    public String getNodeText() {
         return _text;
     }
 
