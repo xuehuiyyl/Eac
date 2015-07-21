@@ -5,5 +5,6 @@ package edu.self.eac.lexer.nfa;
  */
 public enum NfaNodeType {
     Pattern,
-    Operator
+    Operator,
+    Alphabet
 }

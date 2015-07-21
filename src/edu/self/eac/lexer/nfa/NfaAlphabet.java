@@ -5,10 +5,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Created by »Ô on 2015/7/18.
- * Comments: NFA×ÖÄ¸±í
+ * Created by ï¿½ï¿½ on 2015/7/18.
+ * Comments: NFAï¿½ï¿½Ä¸ï¿½ï¿½
  */
-public class NfaAlphabet {
+public class NfaAlphabet implements INfaNode {
     /**
      * @param name  NFA alphabet name
      * @param value NFA alphabet content
@@ -80,6 +80,14 @@ public class NfaAlphabet {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    public String getNodeText() {
+        return _text;
+    }
+
+    public NfaNodeType getNodeType() {
+        return NfaNodeType.Alphabet;
     }
 
     public static NfaAlphabet

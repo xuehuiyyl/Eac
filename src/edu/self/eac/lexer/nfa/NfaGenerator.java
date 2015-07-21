@@ -15,15 +15,15 @@ public class NfaGenerator {
         _matchStack = new Stack<>();
     }
 
-    public NfaPattern parse(String filepath){
+    public NfaPattern parse(String filepath) {
         return null;
     }
 
-    public NfaPattern parseLine(String reDifinition) {
+    public INfaNode parseLine(String reDifinition) {
         if (reDifinition == null || reDifinition.trim().isEmpty()) return null;
 
         int firstBlankIndex = 0;
-        for (int i = 0; i < reDifinition.length(); ++i){
+        for (int i = 0; i < reDifinition.length(); ++i) {
             if (reDifinition.charAt(i) != ' ')
                 continue;
             firstBlankIndex = i;
@@ -33,6 +33,12 @@ public class NfaGenerator {
         String body = reDifinition.substring(firstBlankIndex + 1);
         if (name.isEmpty() || body.isEmpty()) return null;
 
+        if (body.charAt(0) == '[') {
+            NfaAlphabet alphabet = _parseAlphabet(name, body);
+            _alphabetSet.add(alphabet);
+            return alphabet;
+        }
+
         _matchStack.clear();
         _initMatchTable();
 
@@ -40,81 +46,147 @@ public class NfaGenerator {
         int length = body.length();
         boolean inbracket = false;
         char c = body.charAt(index);
+        INfaNode node = null;
         while (index < length) {
-            if (Character.isLetter(c)) {
+            if (Character.isLetterOrDigit(c)) {
+                node = new NfaPattern(String.valueOf(c), NfaPatternType.Alpha);
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+                if (index < length - 1) {
+                    char next = body.charAt(index + 1);
+                    if (next == '*' || next == '+' || next == '?') {
+                        continue;
+                    }
+                }
+            } else if (c == '(') {
+                node = new NfaOperator(String.valueOf(c));
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+            } else if (c == ')') {
+                node = new NfaOperator(String.valueOf(c));
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+            } else if (c == '*' || c == '+' || c == '?') {
+                node = new NfaOperator(String.valueOf(c));
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+            } else if (c == '|') {
+                node = new NfaOperator(String.valueOf(c));
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+            } else if (c == '\\') {
+                ++index;
+                c = body.charAt(index);
+                node = new NfaPattern(String.valueOf(c), NfaPatternType.Alpha);
+                _matchStack.push(node);
+                _mark(node);
+                ++index;
+            } else if (c == '[') {
+                int start = index;
+                
+            } else if (c == '{') {
 
             }
-            else if (Character.isDigit(c)) {
-
-            }
-            else if (c == '(') {
-
-            }
-            else if (c == ')') {
-
-            }
-            else if (c == '*' || c == '+' || c == '?') {
-
-            }
-            else if (c == '|') {
-
-            }
-            else if (c == '\\') {
-
-            }
-            else if (c == '[') {
-
-            }
-            else if (c == '{') {
-
-            }
+            NfaPatternType type = _match();
+            if (type != NfaPatternType.Alpha)
+                _matchStack.push(_reduce(type));
         }
 
+        return _matchStack.pop();
+    }
+
+    public NfaPattern combinate(HashSet<NfaPattern> patternSet) {
         return null;
     }
 
-    public NfaPattern combinate(HashSet<NfaPattern> patternSet){
-        return null;
-    }
-
-    private void match(INfaNode node){
-        if (node.getNodeType() == NfaNodeType.Pattern) {//要改！！！，入栈+1，出栈匹配成功后改行各-1
+    private void _mark(INfaNode node) {
+        if (node.getNodeType() == NfaNodeType.Pattern) {
             if (_matchTable[3][0] == _matchTable[3][1] + 1 && _matchTable[3][1] == _matchTable[3][2])
                 _matchTable[3][1] += 1;
-            if (_matchTable[2][0] == 0 && _matchTable[2][1] == 0)
-                _matchTable[2][0] = 1;
-            if (_matchTable[1][0] == 0 && _matchTable[1][1] == 0)
-                _matchTable[1][0] = 1;
-            if (_matchTable[1][0] == 1 && _matchTable[1][1] == 0)
-                _matchTable[1][1] = 1;
-            if (_matchTable[0][0] == 0 && _matchTable[0][1] == 0 && _matchTable[0][2] == 0)
-                _matchTable[0][0] = 1;
-            if (_matchTable[0][0] == 1 && _matchTable[0][1] == 1 && _matchTable[0][2] == 0)
-                _matchTable[0][2] = 1;
-        }
-        else if(node.getNodeType() == NfaNodeType.Operator) {
+            if (_matchTable[2][0] == _matchTable[2][1])
+                _matchTable[2][0] += 1;
+            if (_matchTable[1][0] == _matchTable[1][1])
+                _matchTable[1][0] += 1;
+            if (_matchTable[1][0] == _matchTable[1][1] + 1)
+                _matchTable[1][1] += 1;
+            if (_matchTable[0][0] == _matchTable[0][1] && _matchTable[0][1] == _matchTable[0][2])
+                _matchTable[0][0] += 1;
+            if (_matchTable[0][0] == _matchTable[0][1] && _matchTable[0][1] == _matchTable[0][2] + 1)
+                _matchTable[0][2] += 1;
+        } else if (node.getNodeType() == NfaNodeType.Operator) {
             String text = node.getNodeText();
-            if (text.equals("(") && _matchTable[3][0] == 0) {
-                _matchTable[3][0] = 1;
-            }
-            else if(text.equals(")") && _matchTable[3][0] == 1 && _matchTable[3][1] == 1 && _matchTable[3][2] == 0) {
-                _matchTable[3][2] = 1;
-            }
-            else if ((text.equals("*") || text.equals("+") || text.equals("?")) && _matchTable[2][0] == 1) {
-                _matchTable[2][1] = 1;
-            }
-            else if (text.equals("|") && _matchTable[0][0] == 1 && _matchTable[0][1] == 0 && _matchTable[0][2] == 0) {
-                _matchTable[0][1] = 1;
+            if (text.equals("(")) {
+                _matchTable[3][0] += 1;
+            } else if (text.equals(")") && _matchTable[3][0] == _matchTable[3][1] && _matchTable[3][1] == _matchTable[3][2] + 1) {
+                _matchTable[3][2] += 1;
+            } else if ((text.equals("*") || text.equals("+") || text.equals("?")) && _matchTable[2][0] > 0) {
+                _matchTable[2][1] += 1;
+            } else if (text.equals("|") && _matchTable[0][0] == _matchTable[0][1] + 1 && _matchTable[0][1] == _matchTable[0][2]) {
+                _matchTable[0][1] += 1;
             }
         }
     }
 
-    private NfaPatternType getPatternType() {
-        if (_matchTable[3][0] == 1 && _matchTable[3][1] == 1 && _matchTable[3][2] == 1) return NfaPatternType.Bracket;
-        else if (_matchTable[2][0] == 1 && _matchTable[2][1] == 1) return NfaPatternType.Closure;
-        else if (_matchTable[1][0] == 1 && _matchTable[1][1] == 1) return NfaPatternType.Join;
-        else if (_matchTable[0][0] == 1 && _matchTable[0][1] == 1 && _matchTable[0][2] == 1) return NfaPatternType.Select;
+    private NfaPattern _reduce(NfaPatternType type) {
+        NfaPattern pattern = null;
+        if (type == NfaPatternType.Bracket) {
+            _matchStack.pop();
+            INfaNode tmp = _matchStack.pop();
+            pattern = new NfaPattern("(" + tmp.getNodeText() + ")", NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern)tmp);
+            pattern.setOperator(new NfaOperator("()"));
+            --_matchTable[3][0];
+            --_matchTable[3][1];
+            --_matchTable[3][2];
+            _matchStack.pop();
+        } else if (type == NfaPatternType.Closure) {
+            INfaNode tmpOp = _matchStack.pop();
+            INfaNode tmpAl = _matchStack.pop();
+            pattern = new NfaPattern(tmpAl.getNodeText() + tmpOp.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern) tmpAl);
+            pattern.setOperator((NfaOperator) tmpOp);
+            --_matchTable[2][0];
+            --_matchTable[2][1];
+        } else if (type == NfaPatternType.Join) {
+            INfaNode tmpRal = _matchStack.pop();
+            INfaNode tmpLal = _matchStack.pop();
+            pattern = new NfaPattern(tmpLal.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern) tmpLal);
+            pattern.setRightChildPattern((NfaPattern) tmpRal);
+            pattern.setOperator(new NfaOperator("·"));
+            --_matchTable[1][0];
+            --_matchTable[1][1];
+        } else if (type == NfaPatternType.Select) {
+            INfaNode tmpRal = _matchStack.pop();
+            INfaNode tmpOp = _matchStack.pop();
+            INfaNode tmpLal = _matchStack.pop();
+            pattern = new NfaPattern(tmpLal.getNodeText() + tmpOp.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern) tmpLal);
+            pattern.setRightChildPattern((NfaPattern) tmpRal);
+            pattern.setOperator((NfaOperator) tmpOp);
+            --_matchTable[0][0];
+            --_matchTable[0][1];
+            --_matchTable[0][2];
+        }
+
+        return pattern;
+    }
+
+    private NfaPatternType _match() {
+        if (_matchTable[3][0] > 0 && _matchTable[3][0] == _matchTable[3][1] && _matchTable[3][1] == _matchTable[3][2]) return NfaPatternType.Bracket;
+        else if (_matchTable[2][0] > 0 && _matchTable[2][0] == _matchTable[2][1]) return NfaPatternType.Closure;
+        else if (_matchTable[1][0] > 0 && _matchTable[1][0] == _matchTable[1][1]) return NfaPatternType.Join;
+        else if (_matchTable[0][0] > 0 && _matchTable[0][0] == _matchTable[0][1] && _matchTable[0][1] == _matchTable[0][2]) return NfaPatternType.Select;
         else return NfaPatternType.Alpha;
+    }
+
+    private NfaAlphabet _parseAlphabet(String name, String text) {
+        return NfaAlphabet.CreateAlphabet(name, text);
     }
 
     private void _initMatchTable() {
