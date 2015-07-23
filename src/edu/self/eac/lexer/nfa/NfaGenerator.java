@@ -87,10 +87,30 @@ public class NfaGenerator {
                 _mark(node);
                 ++index;
             } else if (c == '[') {
-                int start = index;
-                
-            } else if (c == '{') {
+                int end = _findFirstChar(body, index, ']');
+                node = new NfaPattern(body.substring(index, end), NfaPatternType.Alpha);
+                _matchStack.push(node);
+                _mark(node);
+                index = end;
+                if (index < length - 1){
+                    char next = body.charAt(index + 1);
+                    if (next == '*' || next == '+' || next == '?'){
+                        continue;
+                    }
+                }
 
+            } else if (c == '{') {
+                int end = _findFirstChar(body, index, '}');
+                node = new NfaPattern(body.substring(index, end), NfaPatternType.Alpha);
+                _matchStack.push(node);
+                _mark(node);
+                index = end;
+                if (index < length - 1){
+                    char next = body.charAt(index + 1);
+                    if (next == '*' || next == '+' || next == '?'){
+                        continue;
+                    }
+                }
             }
             NfaPatternType type = _match();
             if (type != NfaPatternType.Alpha)
@@ -102,6 +122,12 @@ public class NfaGenerator {
 
     public NfaPattern combinate(HashSet<NfaPattern> patternSet) {
         return null;
+    }
+
+    private int _findFirstChar(String s, int startIndex, char target) {
+        for (int i = startIndex; i < s.length() - startIndex; ++i)
+            if (s.charAt(i) == target) return i;
+        return -1;
     }
 
     private void _mark(INfaNode node) {
