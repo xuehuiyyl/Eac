@@ -5,4 +5,13 @@ package edu.self.eac.lexer.re;
  * 正则表达式定义构成元素——运算符
  */
 public class ReOperator implements IReElement {
+    public ReOperator(String operator) {
+        _operator = operator;
+    }
+
+    public boolean equals(String operator) {
+        return _operator.equals(operator);
+    }
+
+    private String _operator;
 }
