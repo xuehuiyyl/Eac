@@ -9,6 +9,10 @@ public class ReOperator implements IReElement {
         _operator = operator;
     }
 
+    public String getName() {
+        return String.valueOf(_operator);
+    }
+
     public boolean equals(String operator) {
         return _operator.equals(operator);
     }

@@ -16,10 +16,13 @@ public class ReGenerator {
 
             IReElement element = parseLine(line);
             if (element instanceof ReAlphaSet) {
-                rdef.addAlphaSet((ReAlphaSet)element);
-            }
-            else if (element instanceof  ReProduction) {
-                rdef.addProduction((ReProduction)element);
+                if (rdef.containsAlphaSet(element.getName()))
+                    throw new Error("字母集：" + element.getName() + "重复定义。");
+                rdef.addAlphaSet((ReAlphaSet) element);
+            } else if (element instanceof ReProduction) {
+                if (rdef.containsProduction(element.getName()))
+                    throw new Error("产生式：" + element.getName() + "重复定义。");
+                rdef.addProduction((ReProduction) element);
             }
         }
 
@@ -47,7 +50,7 @@ public class ReGenerator {
             else if (peek == '{') {
                 int rbindex = _findFirstChar(line, index, '}');
                 String refname = line.substring(index + 1, rbindex - 1);
-                elementList.add(new ReAlphaSetReference(refname));
+                elementList.add(new ReReference(refname));
                 index = rbindex + 1;
             }
             else if (peek == '(') {
@@ -59,10 +62,10 @@ public class ReGenerator {
                 ++index;
             }
             else if (peek == '*') {
-                elementList.add(new ReOpClosure());
+                elementList.add(new ReOpKleeneClosure());
                 ++index;
             }
-            else if (peek == '��') {
+            else if (peek == '·') {
                 elementList.add(new ReOpJoin());
                 ++index;
             }

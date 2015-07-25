@@ -13,6 +13,10 @@ public class ReProduction implements IReElement {
         _elementList = new ArrayList<>();
     }
 
+    public String getName() {
+        return _name;
+    }
+
     public ArrayList<IReElement> getElementList() {
         return _elementList;
     }

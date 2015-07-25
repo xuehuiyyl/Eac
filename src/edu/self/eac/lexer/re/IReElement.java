@@ -5,4 +5,5 @@ package edu.self.eac.lexer.re;
  * 正则表达式定义构成元素接口
  */
 public interface IReElement {
+    String getName();
 }

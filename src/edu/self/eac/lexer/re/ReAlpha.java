@@ -9,6 +9,10 @@ public class ReAlpha implements IReElement {
         _alpha = alpha;
     }
 
+    public String getName() {
+        return String.valueOf(_alpha);
+    }
+
     public boolean equals(char alpha) {
         return _alpha == alpha;
     }

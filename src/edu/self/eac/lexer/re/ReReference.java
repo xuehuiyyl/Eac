@@ -1,10 +1,10 @@
 package edu.self.eac.lexer.re;
 
 /**
- * Created by »Ô on 2015/7/25.
+ * Created by ï¿½ï¿½ on 2015/7/25.
  */
-public class ReAlphaSetReference implements IReElement {
-    public ReAlphaSetReference(String name) {
+public class ReReference implements IReElement {
+    public ReReference(String name) {
         _name = name;
     }
 

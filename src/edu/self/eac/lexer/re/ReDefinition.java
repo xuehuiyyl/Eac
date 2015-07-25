@@ -27,6 +27,22 @@ public class ReDefinition {
         return _productionList.add(production);
     }
 
+    public boolean containsAlphaSet(String name) {
+        for (ReAlphaSet alphaSet : _alphaSetList) {
+            if (alphaSet.getName() == name)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean containsProduction(String name) {
+        for (ReProduction production : _productionList){
+            if (production.getName() == name)
+                return true;
+        }
+        return false;
+    }
+
     private ArrayList<ReAlphaSet> _alphaSetList;
     private ArrayList<ReProduction> _productionList;
 }
