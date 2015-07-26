@@ -15,7 +15,7 @@ public class NfaGenerator {
         _matchStack = new Stack<>();
     }
 
-    public NfaPattern parse(String filepath) {
+    public NfaPattern1 parse(String filepath) {
         return null;
     }
 
@@ -49,7 +49,7 @@ public class NfaGenerator {
         INfaNode node = null;
         while (index < length) {
             if (Character.isLetterOrDigit(c)) {
-                node = new NfaPattern(String.valueOf(c), NfaPatternType.Alpha);
+                node = new NfaPattern1(String.valueOf(c), NfaPatternType.Alpha);
                 _matchStack.push(node);
                 _mark(node);
                 ++index;
@@ -82,13 +82,13 @@ public class NfaGenerator {
             } else if (c == '\\') {
                 ++index;
                 c = body.charAt(index);
-                node = new NfaPattern(String.valueOf(c), NfaPatternType.Alpha);
+                node = new NfaPattern1(String.valueOf(c), NfaPatternType.Alpha);
                 _matchStack.push(node);
                 _mark(node);
                 ++index;
             } else if (c == '[') {
                 int end = _findFirstChar(body, index, ']');
-                node = new NfaPattern(body.substring(index, end), NfaPatternType.Alpha);
+                node = new NfaPattern1(body.substring(index, end), NfaPatternType.Alpha);
                 _matchStack.push(node);
                 _mark(node);
                 index = end;
@@ -101,7 +101,7 @@ public class NfaGenerator {
 
             } else if (c == '{') {
                 int end = _findFirstChar(body, index, '}');
-                node = new NfaPattern(body.substring(index, end), NfaPatternType.Alpha);
+                node = new NfaPattern1(body.substring(index, end), NfaPatternType.Alpha);
                 _matchStack.push(node);
                 _mark(node);
                 index = end;
@@ -120,7 +120,7 @@ public class NfaGenerator {
         return _matchStack.pop();
     }
 
-    public NfaPattern combinate(HashSet<NfaPattern> patternSet) {
+    public NfaPattern1 combinate(HashSet<NfaPattern1> patternSet) {
         return null;
     }
 
@@ -158,13 +158,13 @@ public class NfaGenerator {
         }
     }
 
-    private NfaPattern _reduce(NfaPatternType type) {
-        NfaPattern pattern = null;
+    private NfaPattern1 _reduce(NfaPatternType type) {
+        NfaPattern1 pattern = null;
         if (type == NfaPatternType.Bracket) {
             _matchStack.pop();
             INfaNode tmp = _matchStack.pop();
-            pattern = new NfaPattern("(" + tmp.getNodeText() + ")", NfaPatternType.Alpha);
-            pattern.setLeftChildPattern((NfaPattern)tmp);
+            pattern = new NfaPattern1("(" + tmp.getNodeText() + ")", NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern1)tmp);
             pattern.setOperator(new NfaOperator("()"));
             --_matchTable[3][0];
             --_matchTable[3][1];
@@ -173,17 +173,17 @@ public class NfaGenerator {
         } else if (type == NfaPatternType.Closure) {
             INfaNode tmpOp = _matchStack.pop();
             INfaNode tmpAl = _matchStack.pop();
-            pattern = new NfaPattern(tmpAl.getNodeText() + tmpOp.getNodeText(), NfaPatternType.Alpha);
-            pattern.setLeftChildPattern((NfaPattern) tmpAl);
+            pattern = new NfaPattern1(tmpAl.getNodeText() + tmpOp.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern1) tmpAl);
             pattern.setOperator((NfaOperator) tmpOp);
             --_matchTable[2][0];
             --_matchTable[2][1];
         } else if (type == NfaPatternType.Join) {
             INfaNode tmpRal = _matchStack.pop();
             INfaNode tmpLal = _matchStack.pop();
-            pattern = new NfaPattern(tmpLal.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
-            pattern.setLeftChildPattern((NfaPattern) tmpLal);
-            pattern.setRightChildPattern((NfaPattern) tmpRal);
+            pattern = new NfaPattern1(tmpLal.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern1) tmpLal);
+            pattern.setRightChildPattern((NfaPattern1) tmpRal);
             pattern.setOperator(new NfaOperator("·"));
             --_matchTable[1][0];
             --_matchTable[1][1];
@@ -191,9 +191,9 @@ public class NfaGenerator {
             INfaNode tmpRal = _matchStack.pop();
             INfaNode tmpOp = _matchStack.pop();
             INfaNode tmpLal = _matchStack.pop();
-            pattern = new NfaPattern(tmpLal.getNodeText() + tmpOp.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
-            pattern.setLeftChildPattern((NfaPattern) tmpLal);
-            pattern.setRightChildPattern((NfaPattern) tmpRal);
+            pattern = new NfaPattern1(tmpLal.getNodeText() + tmpOp.getNodeText() + tmpRal.getNodeText(), NfaPatternType.Alpha);
+            pattern.setLeftChildPattern((NfaPattern1) tmpLal);
+            pattern.setRightChildPattern((NfaPattern1) tmpRal);
             pattern.setOperator((NfaOperator) tmpOp);
             --_matchTable[0][0];
             --_matchTable[0][1];
@@ -235,7 +235,7 @@ public class NfaGenerator {
     }
 
     private HashSet<NfaAlphabet> _alphabetSet;
-    private HashSet<NfaPattern> _patternSet;
+    private HashSet<NfaPattern1> _patternSet;
     private int[][] _matchTable;
     private Stack<INfaNode> _matchStack;
 }

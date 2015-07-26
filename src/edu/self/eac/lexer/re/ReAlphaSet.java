@@ -1,5 +1,7 @@
 package edu.self.eac.lexer.re;
 
+import edu.self.eac.lexer.util.SetRelationType;
+
 import java.util.Hashtable;
 
 /**
@@ -17,6 +19,14 @@ public class ReAlphaSet implements IReElement {
         return _name;
     }
 
+    public Hashtable<String, String> getValue() {
+        return _alphaSet;
+    }
+
+    public SetRelationType getSetRel() {
+        return _alphaSetRel;
+    }
+
     public boolean contains(String key) {
         return _alphaSet.containsKey(key);
     }
@@ -26,11 +36,20 @@ public class ReAlphaSet implements IReElement {
             throw new Error("字符集：" + _name + "的定义必须以'['开头并且以']'结尾。");
         }
 
+        if (_redefinition.charAt(1) == '^') {
+            _alphaSetRel = SetRelationType.NotIn;
+        }
+        else  {
+            _alphaSetRel = SetRelationType.In;
+        }
+
         _alphaSet = new Hashtable<>();
 
         switch (_redefinition) {
             case "[0-9]":
             case "[9-0]":
+            case "[^0-9]":
+            case "[^9-0]":
                 _alphaSet.put("0", "0");
                 _alphaSet.put("1", "1");
                 _alphaSet.put("2", "2");
@@ -43,6 +62,7 @@ public class ReAlphaSet implements IReElement {
                 _alphaSet.put("9", "9");
                 break;
             case "[a-z]":
+            case "[^a-z]":
                 _alphaSet.put("a", "a");
                 _alphaSet.put("b", "b");
                 _alphaSet.put("c", "c");
@@ -71,6 +91,7 @@ public class ReAlphaSet implements IReElement {
                 _alphaSet.put("z", "z");
                 break;
             case "[A-Z]":
+            case "[^A-Z]":
                 _alphaSet.put("A", "A");
                 _alphaSet.put("B", "B");
                 _alphaSet.put("C", "C");
@@ -100,6 +121,8 @@ public class ReAlphaSet implements IReElement {
                 break;
             case "[a-zA-Z]":
             case "[A-Za-z]":
+            case "[^a-zA-Z]":
+            case "[^A-Za-z]":
                 _alphaSet.put("a", "a");
                 _alphaSet.put("b", "b");
                 _alphaSet.put("c", "c");
@@ -154,7 +177,8 @@ public class ReAlphaSet implements IReElement {
                 _alphaSet.put("Z", "Z");
                 break;
             default:
-                for (int i = 1; i < _redefinition.length() - 1; ++i) {
+                int start = _alphaSetRel == SetRelationType.In ? 1 : 2;
+                for (int i = start; i < _redefinition.length() - 1; ++i) {
                     _alphaSet.put(String.valueOf(_redefinition.charAt(i)), String.valueOf(_redefinition.charAt(i)));
                 }
                 break;
@@ -164,4 +188,5 @@ public class ReAlphaSet implements IReElement {
     private String _name;
     private String _redefinition;
     private Hashtable<String, String> _alphaSet;
+    private SetRelationType _alphaSetRel;
 }
