@@ -1,4 +1,4 @@
-package edu.self.eac.lexer.re;
+package edu.self.eac.lexer.re.def;
 
 import java.util.ArrayList;
 

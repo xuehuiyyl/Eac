@@ -1,5 +1,8 @@
 package edu.self.eac.lexer.nfa;
 
+import edu.self.eac.lexer.nfa.state.NfaState;
+import edu.self.eac.lexer.nfa.state.NfaStateType;
+
 import java.util.HashSet;
 
 /**

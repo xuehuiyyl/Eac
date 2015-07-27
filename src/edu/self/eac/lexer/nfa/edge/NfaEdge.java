@@ -1,4 +1,6 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.edge;
+
+import edu.self.eac.lexer.nfa.state.NfaState;
 
 /**
  * Created by �� on 2015/7/18.

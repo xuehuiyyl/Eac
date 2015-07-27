@@ -1,7 +1,7 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.state;
 
 /**
- * Created by »Ô on 2015/7/18.
+ * Created by ï¿½ï¿½ on 2015/7/18.
  */
 public enum NfaStateType {
     Initial,

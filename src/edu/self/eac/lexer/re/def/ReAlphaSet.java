@@ -1,5 +1,6 @@
-package edu.self.eac.lexer.re;
+package edu.self.eac.lexer.re.def;
 
+import edu.self.eac.lexer.re.def.IReElement;
 import edu.self.eac.lexer.util.SetRelationType;
 
 import java.util.Hashtable;

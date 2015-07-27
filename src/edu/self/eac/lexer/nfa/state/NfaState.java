@@ -1,4 +1,6 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.state;
+
+import edu.self.eac.lexer.nfa.edge.NfaEdge;
 
 import java.util.ArrayList;
 import java.util.HashSet;

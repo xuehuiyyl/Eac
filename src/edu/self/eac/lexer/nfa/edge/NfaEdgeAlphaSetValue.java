@@ -1,7 +1,7 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.edge;
 
-import edu.self.eac.lexer.re.ReAlpha;
-import edu.self.eac.lexer.re.ReAlphaSet;
+import edu.self.eac.lexer.re.def.ReAlpha;
+import edu.self.eac.lexer.re.def.ReAlphaSet;
 import edu.self.eac.lexer.util.SetRelationType;
 
 import java.util.Hashtable;

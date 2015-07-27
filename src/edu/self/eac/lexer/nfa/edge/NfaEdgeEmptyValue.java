@@ -1,4 +1,4 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.edge;
 
 /**
  * Created by xuehui on 15/7/26.

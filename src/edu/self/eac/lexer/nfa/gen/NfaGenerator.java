@@ -1,4 +1,6 @@
-package edu.self.eac.lexer.nfa;
+package edu.self.eac.lexer.nfa.gen;
+
+import edu.self.eac.lexer.nfa.*;
 
 import java.util.HashSet;
 import java.util.Stack;

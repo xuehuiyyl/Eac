@@ -1,4 +1,6 @@
-package edu.self.eac.lexer.re;
+package edu.self.eac.lexer.re.gen;
+
+import edu.self.eac.lexer.re.def.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,6 @@
-package edu.self.eac.lexer.re;
+package edu.self.eac.lexer.re.def;
+
+import edu.self.eac.lexer.re.def.IReElement;
 
 /**
  * Created by �� on 2015/7/25.
