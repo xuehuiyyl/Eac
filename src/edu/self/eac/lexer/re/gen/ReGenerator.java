@@ -55,6 +55,11 @@ public class ReGenerator {
                 elementList.add(new ReReference(refname));
                 index = rbindex + 1;
             }
+            else if (peek == '[') {
+                int rbindex = _findFirstChar(line, index, ']');
+                String refname = line.substring(index+1,rbindex-1);
+                
+            }
             else if (peek == '(') {
                 elementList.add(new ReOpLeftBracket());
                 ++index;

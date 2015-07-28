@@ -30,7 +30,15 @@ public class NfaAlphabetConstruction implements INfaConstruction {
         return _alphaSetRel;
     }
 
+    public String getProductionName() {
+        return _productionName;
+    }
+
+    public void setProductionName(String productionName) {
+        _productionName = productionName;
+    }
 
     private Hashtable<String, String> _alphaSet;
     private SetRelationType _alphaSetRel;
+    private String _productionName;
 }
