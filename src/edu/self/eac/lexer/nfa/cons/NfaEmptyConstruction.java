@@ -12,5 +12,9 @@ public class NfaEmptyConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private String _productionName;
 }

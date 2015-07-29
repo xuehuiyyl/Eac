@@ -17,6 +17,10 @@ public class NfaKleeneClosureConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private INfaConstruction _cons;
     private NfaOperatorConstruction _kleene;
     private String _productionName;

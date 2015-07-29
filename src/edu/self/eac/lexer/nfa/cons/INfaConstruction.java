@@ -6,4 +6,5 @@ package edu.self.eac.lexer.nfa.cons;
 public interface INfaConstruction {
     String getProductionName();
     void setProductionName(String productionName);
+    INfaConstruction copy();
 }

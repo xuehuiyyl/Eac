@@ -14,5 +14,9 @@ public class NfaOperatorConstruction implements INfaConstruction {
         return _operator;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private ReOperator _operator;
 }

@@ -18,6 +18,10 @@ public class NfaSelectConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private INfaConstruction _leftCons;
     private NfaOperatorConstruction _select;
     private INfaConstruction _rightCons;

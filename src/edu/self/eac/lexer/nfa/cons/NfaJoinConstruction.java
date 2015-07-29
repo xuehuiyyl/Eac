@@ -18,6 +18,10 @@ public class NfaJoinConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private INfaConstruction _leftCons;
     private NfaOperatorConstruction _join;
     private INfaConstruction _rightCons;

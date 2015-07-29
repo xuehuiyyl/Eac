@@ -17,6 +17,10 @@ public class NfaOptionalConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private INfaConstruction _cons;
     private NfaOperatorConstruction _optional;
     private String _productionName;

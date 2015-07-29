@@ -1,7 +1,8 @@
 package edu.self.eac.lexer.nfa.gen;
 
-import edu.self.eac.lexer.nfa.cons.INfaConstruction;
-import edu.self.eac.lexer.nfa.cons.NfaAlphabetConstruction;
+import edu.self.eac.lexer.nfa.NfaAlphabet;
+import edu.self.eac.lexer.nfa.NfaOperator;
+import edu.self.eac.lexer.nfa.cons.*;
 import edu.self.eac.lexer.re.def.*;
 
 import java.util.ArrayList;
@@ -35,38 +36,119 @@ public class NfaGenerator {
         INfaConstruction construction;
         for (IReElement element : elementList) {
             if (element instanceof ReAlpha) {
-                construction = new NfaAlphabetConstruction((ReAlpha)element);
-            }
-            else if (element instanceof ReReference) {
+                construction = new NfaAlphabetConstruction((ReAlpha) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReAlphaSet) {
+                construction = new NfaAlphabetConstruction((ReAlphaSet) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReReference) {
+                ReAlphaSet alphaSet = null;
+                for (ReAlphaSet as : _alphaSetList) {
+                    if (as.getName() == element.getName()) {
+                        alphaSet = as;
+                    }
+                }
+                if (alphaSet != null) {
+                    construction = new NfaAlphabetConstruction(alphaSet);
+                    _stack.push(construction);
+                    _match();
+                    continue;
+                }
 
-            }
-            else if (element instanceof ReOpLeftBracket) {
-
-            }
-            else if (element instanceof ReOpRightBracket) {
-
-            }
-            else if (element instanceof ReOpKleeneClosure) {
-
-            }
-            else if (element instanceof ReOpPositiveClosure) {
-
-            }
-            else if (element instanceof ReOpOptional) {
-
-            }
-            else if (element instanceof ReOpJoin) {
-
-            }
-            else if (element instanceof ReOpSelect) {
-
+                for (INfaConstruction cons : _constructionList) {
+                    if (cons.getProductionName() == element.getName()) {
+                        construction = cons.copy();
+                        _stack.push(construction);
+                        _match();
+                        continue;
+                    }
+                }
+            } else if (element instanceof ReOpLeftBracket) {
+                construction = new NfaOperatorConstruction((ReOpLeftBracket) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpRightBracket) {
+                construction = new NfaOperatorConstruction((ReOpRightBracket) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpKleeneClosure) {
+                construction = new NfaOperatorConstruction((ReOpKleeneClosure) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpPositiveClosure) {
+                construction = new NfaOperatorConstruction((ReOpPositiveClosure) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpOptional) {
+                construction = new NfaOperatorConstruction((ReOpOptional) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpJoin) {
+                construction = new NfaOperatorConstruction((ReOpJoin) element);
+                _stack.push(construction);
+                _match();
+            } else if (element instanceof ReOpSelect) {
+                construction = new NfaOperatorConstruction((ReOpSelect) element);
+                _stack.push(construction);
+                _match();
             }
         }
-        return null;
+
+        if (_stack.size() == 1)
+            return _stack.pop();
+        else
+            throw new Error("产生式：" + production.getName() + "定义错误。");
     }
 
-    private INfaConstruction _match() {
-        return null;
+    private void _match() {
+        if (_stack.size() == 0) return;
+        while(true) {
+            INfaConstruction peek = _stack.elementAt(0);
+            if (peek instanceof NfaOperatorConstruction) {
+                if (_stack.size() < 2) return;
+                INfaConstruction next = _stack.elementAt(1);
+                if (next instanceof NfaOperatorConstruction) {
+                    throw new Error("相邻的操作符：" + ((NfaOperatorConstruction) next).getReOperator().getName() + ((NfaOperatorConstruction) peek).getReOperator().getName());
+                }
+                ReOperator operator = ((NfaOperatorConstruction) peek).getReOperator();
+                if (operator instanceof ReOpRightBracket) {
+                    if (_stack.size() < 3) {
+                        throw new Error("");
+                    }
+                    INfaConstruction last = _stack.elementAt(2);
+                    //???
+                }
+                else if (operator instanceof ReOpOptional) {
+                    INfaConstruction cons = new NfaOptionalConstruction(next,(NfaOperatorConstruction)peek);
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.push(cons);
+                }
+                else if (operator instanceof ReOpPositiveClosure) {
+                    INfaConstruction cons = new NfaPositiveClosureConstruction(next,(NfaOperatorConstruction)peek);
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.push(cons);
+                }
+                else if (operator instanceof ReOpKleeneClosure) {
+                    INfaConstruction cons = new NfaKleeneClosureConstruction(next, (NfaOperatorConstruction)peek);
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.push(cons);
+                }
+                else {
+                    throw new Error("");
+                }
+            }
+            else {
+                if (_stack.size() < 2) return;
+                INfaConstruction next = _stack.elementAt(1);
+                if (next instanceof NfaOperatorConstruction)
+            }
+            break;
+        }
     }
 
     private Stack<INfaConstruction> _stack;

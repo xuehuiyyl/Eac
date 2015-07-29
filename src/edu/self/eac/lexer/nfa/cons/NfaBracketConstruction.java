@@ -18,6 +18,10 @@ public class NfaBracketConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private NfaOperatorConstruction _leftBracket;
     private INfaConstruction _cons;
     private NfaOperatorConstruction _rightBracket;

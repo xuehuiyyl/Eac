@@ -38,6 +38,10 @@ public class NfaAlphabetConstruction implements INfaConstruction {
         _productionName = productionName;
     }
 
+    public INfaConstruction copy() {
+        return this.copy();
+    }
+
     private Hashtable<String, String> _alphaSet;
     private SetRelationType _alphaSetRel;
     private String _productionName;
