@@ -14,6 +14,14 @@ public class NfaOperatorConstruction implements INfaConstruction {
         return _operator;
     }
 
+    public String getProductionName() {
+        return null;
+    }
+
+    public void setProductionName(String name) {
+        return;
+    }
+
     public INfaConstruction copy() {
         return this.copy();
     }
