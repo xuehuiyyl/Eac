@@ -57,7 +57,7 @@ public class ReGenerator {
             }
             else if (peek == '[') {
                 int rbindex = _findFirstChar(line, index, ']');
-                String name = line.substring(index + 1, rbindex - 1);
+                name = line.substring(index + 1, rbindex - 1);
                 String definition = line.substring(index, rbindex);
                 elementList.add(new ReAlphaSet(name, definition));
             }

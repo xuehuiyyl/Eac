@@ -1,7 +1,5 @@
 package edu.self.eac.lexer.nfa.gen;
 
-import edu.self.eac.lexer.nfa.NfaAlphabet;
-import edu.self.eac.lexer.nfa.NfaOperator;
 import edu.self.eac.lexer.nfa.cons.*;
 import edu.self.eac.lexer.re.def.*;
 
@@ -26,6 +24,11 @@ public class NfaGenerator {
     public INfaConstruction parse() {
         _alphaSetList = _redefinition.getAlphaSetList();
         _productionList = _redefinition.getProductionList();
+
+        for (ReProduction production : _productionList) {
+            INfaConstruction cons = parseProduction(production);
+            _constructionList.add(cons);
+        }
 
         return null;
     }
@@ -105,10 +108,10 @@ public class NfaGenerator {
     private void _match() {
         if (_stack.size() == 0) return;
         while(true) {
-            INfaConstruction peek = _stack.elementAt(0);
+            INfaConstruction peek = _stack.elementAt(_stack.size() - 1);
             if (peek instanceof NfaOperatorConstruction) {
                 if (_stack.size() < 2) return;
-                INfaConstruction next = _stack.elementAt(1);
+                INfaConstruction next = _stack.elementAt(_stack.size() - 2);
                 if (next instanceof NfaOperatorConstruction) {
                     throw new Error("相邻的操作符：" + ((NfaOperatorConstruction) next).getReOperator().getName() + ((NfaOperatorConstruction) peek).getReOperator().getName());
                 }
@@ -117,8 +120,14 @@ public class NfaGenerator {
                     if (_stack.size() < 3) {
                         throw new Error("");
                     }
-                    INfaConstruction last = _stack.elementAt(2);
-                    //???
+                    INfaConstruction last = _stack.elementAt(_stack.size() - 3);
+                    if (!(last instanceof NfaOperatorConstruction)) return;
+                    if (!(((NfaOperatorConstruction) last).getReOperator() instanceof ReOpLeftBracket)) return;
+                    INfaConstruction cons = new NfaBracketConstruction((NfaOperatorConstruction)last,next,(NfaOperatorConstruction)peek);
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.push(cons);
                 }
                 else if (operator instanceof ReOpOptional) {
                     INfaConstruction cons = new NfaOptionalConstruction(next,(NfaOperatorConstruction)peek);
@@ -144,8 +153,25 @@ public class NfaGenerator {
             }
             else {
                 if (_stack.size() < 2) return;
-                INfaConstruction next = _stack.elementAt(1);
-                if (next instanceof NfaOperatorConstruction)
+                INfaConstruction next = _stack.elementAt(_stack.size() - 2);
+                if (next instanceof NfaOperatorConstruction){
+                    INfaConstruction last = _stack.elementAt(_stack.size() - 3);
+                    if (last instanceof NfaOperatorConstruction) return;
+                    if (((NfaOperatorConstruction) next).getReOperator() instanceof ReOpJoin) {
+                        INfaConstruction cons = new NfaJoinConstruction(last, (NfaOperatorConstruction)next, peek);
+                        _stack.pop();
+                        _stack.pop();
+                        _stack.pop();
+                        _stack.push(cons);
+                    }
+                    else if (((NfaOperatorConstruction) next).getReOperator() instanceof ReOpSelect) {
+                        INfaConstruction cons = new NfaSelectConstruction(last, (NfaOperatorConstruction)next, peek);
+                        _stack.pop();
+                        _stack.pop();
+                        _stack.pop();
+                        _stack.push(cons);
+                    }
+                }
             }
             break;
         }
