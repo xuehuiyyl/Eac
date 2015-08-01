@@ -23,7 +23,8 @@ public class ReGeneratorTest {
     @Test
     public void testParseLine() throws Exception {
         ReGenerator gen = new ReGenerator();
-        IReElement element = gen.parseLine("letter [a-z]");
+        IReElement element = gen.parseLine("pro {letter}a(b|c)*");
+//        IReElement element = gen.parseLine("letter [a-zA-Z]");
         if (element instanceof ReAlphaSet) {
             String name = element.getName();
             System.out.println("RE字母集："+name);
@@ -36,7 +37,7 @@ public class ReGeneratorTest {
         else if (element instanceof ReProduction) {
             String name = element.getName();
             ArrayList<IReElement> _elementList = ((ReProduction) element).getElementList();
-            System.out.println("RE字母集："+name);
+            System.out.println("RE产生式："+name);
             for (IReElement item : _elementList) {
                 System.out.println(item.getName());
             }

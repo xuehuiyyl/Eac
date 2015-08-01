@@ -33,7 +33,7 @@ public class ReGenerator {
 
     public IReElement parseLine(String line) {
         int index = _findFirstChar(line, 0, ' ');
-        String name = line.substring(0, index - 1);
+        String name = line.substring(0, index);
         String redefinition = line.substring(index + 1);
 
         if (redefinition.startsWith("[") && redefinition.endsWith("]")) {
@@ -50,16 +50,16 @@ public class ReGenerator {
                 ++index;
             }
             else if (peek == '{') {
-                int rbindex = _findFirstChar(line, index, '}');
-                String refname = line.substring(index + 1, rbindex - 1);
+                int rbindex = _findFirstChar(redefinition, index, '}');
+                String refname = redefinition.substring(index + 1, rbindex - 1);
                 elementList.add(new ReReference(refname));
                 index = rbindex + 1;
             }
             else if (peek == '[') {
-                int rbindex = _findFirstChar(line, index, ']');
-                name = line.substring(index + 1, rbindex - 1);
-                String definition = line.substring(index, rbindex);
-                elementList.add(new ReAlphaSet(name, definition));
+                int rbindex = _findFirstChar(redefinition, index, ']');
+                String asname = redefinition.substring(index + 1, rbindex - 1);
+                String definition = redefinition.substring(index, rbindex);
+                elementList.add(new ReAlphaSet(asname, definition));
             }
             else if (peek == '(') {
                 elementList.add(new ReOpLeftBracket());
