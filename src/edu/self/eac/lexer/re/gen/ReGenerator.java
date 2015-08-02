@@ -27,6 +27,7 @@ public class ReGenerator {
                 rdef.addProduction((ReProduction) element);
             }
         }
+        br.close();
 
         return rdef;
     }
@@ -48,43 +49,42 @@ public class ReGenerator {
             if (peek == '\\') {
                 elementList.add(new ReAlpha(redefinition.charAt(index + 1)));
                 ++index;
-            }
-            else if (peek == '{') {
+            } else if (peek == '{') {
                 int rbindex = _findFirstChar(redefinition, index, '}');
-                String refname = redefinition.substring(index + 1, rbindex - 1);
+                String refname = redefinition.substring(index + 1, rbindex);
                 elementList.add(new ReReference(refname));
                 index = rbindex + 1;
-            }
-            else if (peek == '[') {
+            } else if (peek == '[') {
                 int rbindex = _findFirstChar(redefinition, index, ']');
-                String asname = redefinition.substring(index + 1, rbindex - 1);
-                String definition = redefinition.substring(index, rbindex);
+                String asname = redefinition.substring(index + 1, rbindex);
+                String definition = redefinition.substring(index, rbindex + 1);
                 elementList.add(new ReAlphaSet(asname, definition));
-            }
-            else if (peek == '(') {
+                index = rbindex + 1;
+            } else if (peek == '(') {
                 elementList.add(new ReOpLeftBracket());
                 ++index;
-            }
-            else if (peek == ')') {
+            } else if (peek == ')') {
                 elementList.add(new ReOpRightBracket());
                 ++index;
-            }
-            else if (peek == '*') {
+            } else if (peek == '*') {
                 elementList.add(new ReOpKleeneClosure());
                 ++index;
-            }
-            else if (peek == '·') {
+            } else if (peek == '+') {
+                elementList.add(new ReOpPositiveClosure());
+                ++index;
+            } else if (peek == '?') {
+                elementList.add(new ReOpOptional());
+                ++index;
+            } else if (peek == '·') {
                 elementList.add(new ReOpJoin());
                 ++index;
-            }
-            else if (peek == '|') {
+            } else if (peek == '|') {
                 elementList.add(new ReOpSelect());
                 ++index;
-            }
-            else if (Character.isLetterOrDigit(peek)){
+            } else if (Character.isLetterOrDigit(peek)) {
                 elementList.add(new ReAlpha(peek));
                 ++index;
-            }
+            } else throw new Error("不能识别的正则字符：" + peek);
         }
 
         ReProduction production = new ReProduction(name, redefinition);
@@ -94,7 +94,7 @@ public class ReGenerator {
     }
 
     private int _findFirstChar(String s, int startIndex, char target) {
-        for (int i = startIndex; i < s.length() - startIndex; ++i)
+        for (int i = startIndex; i < s.length(); ++i)
             if (s.charAt(i) == target) return i;
         return -1;
     }
