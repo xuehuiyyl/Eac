@@ -21,23 +21,26 @@ public class NfaGenerator {
         _constructionList = new ArrayList<>();
     }
 
-    public INfaConstruction parse() {
+    public ArrayList<INfaConstruction> parse() {
         _alphaSetList = _redefinition.getAlphaSetList();
         _productionList = _redefinition.getProductionList();
 
         for (ReProduction production : _productionList) {
-            INfaConstruction cons = parseProduction(production);
+            INfaConstruction cons = _parseProduction(production);
             _constructionList.add(cons);
         }
 
-        return null;
+        return _constructionList;
     }
 
-    public INfaConstruction parseProduction(ReProduction production) {
+    private INfaConstruction _parseProduction(ReProduction production) {
         _stack.clear();
+        _currentReProduction = production;
         ArrayList<IReElement> elementList = production.getElementList();
         INfaConstruction construction;
-        for (IReElement element : elementList) {
+        for (int index = 0; index < elementList.size(); ++index) {
+            IReElement element = elementList.get(index);
+            _currentReElementIndex = index;
             if (element instanceof ReAlpha) {
                 construction = new NfaAlphabetConstruction((ReAlpha) element);
                 _stack.push(construction);
@@ -49,8 +52,9 @@ public class NfaGenerator {
             } else if (element instanceof ReReference) {
                 ReAlphaSet alphaSet = null;
                 for (ReAlphaSet as : _alphaSetList) {
-                    if (as.getName() == element.getName()) {
+                    if (as.getName().equals(element.getName())) {
                         alphaSet = as;
+                        break;
                     }
                 }
                 if (alphaSet != null) {
@@ -61,7 +65,7 @@ public class NfaGenerator {
                 }
 
                 for (INfaConstruction cons : _constructionList) {
-                    if (cons.getProductionName() == element.getName()) {
+                    if (cons.getProductionName().equals(element.getName())) {
                         construction = cons.copy();
                         _stack.push(construction);
                         _match();
@@ -106,23 +110,29 @@ public class NfaGenerator {
     }
 
     private void _match() {
-        if (_stack.size() == 0) return;
+        if (_stack.size() < 2) return;
+
         while(true) {
             INfaConstruction peek = _stack.elementAt(_stack.size() - 1);
+
+            if (_stack.size() < 2) return;
+            INfaConstruction next = _stack.elementAt(_stack.size() - 2);
+
             if (peek instanceof NfaOperatorConstruction) {
-                if (_stack.size() < 2) return;
-                INfaConstruction next = _stack.elementAt(_stack.size() - 2);
                 if (next instanceof NfaOperatorConstruction) {
                     throw new Error("相邻的操作符：" + ((NfaOperatorConstruction) next).getReOperator().getName() + ((NfaOperatorConstruction) peek).getReOperator().getName());
                 }
+
                 ReOperator operator = ((NfaOperatorConstruction) peek).getReOperator();
                 if (operator instanceof ReOpRightBracket) {
                     if (_stack.size() < 3) {
-                        throw new Error("");
+                        throw new Error("语法错误，无法匹配的右括号')'");
                     }
+
                     INfaConstruction last = _stack.elementAt(_stack.size() - 3);
                     if (!(last instanceof NfaOperatorConstruction)) return;
                     if (!(((NfaOperatorConstruction) last).getReOperator() instanceof ReOpLeftBracket)) return;
+
                     INfaConstruction cons = new NfaBracketConstruction((NfaOperatorConstruction)last,next,(NfaOperatorConstruction)peek);
                     _stack.pop();
                     _stack.pop();
@@ -147,13 +157,8 @@ public class NfaGenerator {
                     _stack.pop();
                     _stack.push(cons);
                 }
-                else {
-                    throw new Error("");
-                }
             }
             else {
-                if (_stack.size() < 2) return;
-                INfaConstruction next = _stack.elementAt(_stack.size() - 2);
                 if (next instanceof NfaOperatorConstruction){
                     INfaConstruction last = _stack.elementAt(_stack.size() - 3);
                     if (last instanceof NfaOperatorConstruction) return;
@@ -172,8 +177,19 @@ public class NfaGenerator {
                         _stack.push(cons);
                     }
                 }
+                else {
+                    IReElement lookahead = _currentReProduction.getElementList().get(_currentReElementIndex + 1);
+                    if (lookahead instanceof ReOpKleeneClosure || lookahead instanceof ReOpPositiveClosure || lookahead instanceof ReOpOptional)
+                        continue;
+
+                    INfaConstruction cons = new NfaJoinConstruction(next,new NfaOperatorConstruction(new ReOpJoin()),peek);
+                    _stack.pop();
+                    _stack.pop();
+                    _stack.push(cons);
+                }
             }
-            break;
+
+            //跳出无限循环!!!
         }
     }
 
@@ -182,6 +198,8 @@ public class NfaGenerator {
     private ArrayList<ReAlphaSet> _alphaSetList;
     private ArrayList<ReProduction> _productionList;
     private ArrayList<INfaConstruction> _constructionList;
+    private int _currentReElementIndex;
+    private ReProduction _currentReProduction;
 
 //    public NfaPattern1 parse(String filepath) {
 //        return null;

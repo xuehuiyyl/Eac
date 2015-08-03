@@ -20,11 +20,6 @@ public class NfaGeneratorTest {
 
     @Test
     public void testParse() throws Exception {
-
-    }
-
-    @Test
-    public void testParseProduction() throws Exception {
         String filePath = "./test/edu/self/eac/lexer/re/gen/re.txt";
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 new FileInputStream(filePath)));
@@ -32,8 +27,8 @@ public class NfaGeneratorTest {
         ReGenerator gen = new ReGenerator();
         ReDefinition redef = gen.parse(br);
 
-        ArrayList<ReProduction> productionList = redef.getProductionList();
         NfaGenerator ngen = new NfaGenerator(redef);
-        INfaConstruction cons = ngen.parseProduction(productionList.get(0));
+        ArrayList<INfaConstruction> conList = ngen.parse();
+        System.out.println();
     }
 }
