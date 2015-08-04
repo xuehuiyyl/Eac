@@ -112,7 +112,9 @@ public class NfaGenerator {
     private void _match() {
         if (_stack.size() < 2) return;
 
+        boolean matchSuccess = false;
         while(true) {
+            matchSuccess = false;
             INfaConstruction peek = _stack.elementAt(_stack.size() - 1);
 
             if (_stack.size() < 2) return;
@@ -120,7 +122,8 @@ public class NfaGenerator {
 
             if (peek instanceof NfaOperatorConstruction) {
                 if (next instanceof NfaOperatorConstruction) {
-                    throw new Error("相邻的操作符：" + ((NfaOperatorConstruction) next).getReOperator().getName() + ((NfaOperatorConstruction) peek).getReOperator().getName());
+                    //throw new Error("相邻的操作符：" + ((NfaOperatorConstruction) next).getReOperator().getName() + ((NfaOperatorConstruction) peek).getReOperator().getName());
+                    return;
                 }
 
                 ReOperator operator = ((NfaOperatorConstruction) peek).getReOperator();
@@ -138,58 +141,85 @@ public class NfaGenerator {
                     _stack.pop();
                     _stack.pop();
                     _stack.push(cons);
+                    matchSuccess = true;
                 }
                 else if (operator instanceof ReOpOptional) {
                     INfaConstruction cons = new NfaOptionalConstruction(next,(NfaOperatorConstruction)peek);
                     _stack.pop();
                     _stack.pop();
                     _stack.push(cons);
+                    matchSuccess = true;
                 }
                 else if (operator instanceof ReOpPositiveClosure) {
                     INfaConstruction cons = new NfaPositiveClosureConstruction(next,(NfaOperatorConstruction)peek);
                     _stack.pop();
                     _stack.pop();
                     _stack.push(cons);
+                    matchSuccess = true;
                 }
                 else if (operator instanceof ReOpKleeneClosure) {
                     INfaConstruction cons = new NfaKleeneClosureConstruction(next, (NfaOperatorConstruction)peek);
                     _stack.pop();
                     _stack.pop();
                     _stack.push(cons);
+                    matchSuccess = true;
                 }
             }
             else {
-                if (next instanceof NfaOperatorConstruction){
+                if (next instanceof NfaOperatorConstruction) {
                     INfaConstruction last = _stack.elementAt(_stack.size() - 3);
                     if (last instanceof NfaOperatorConstruction) return;
                     if (((NfaOperatorConstruction) next).getReOperator() instanceof ReOpJoin) {
-                        INfaConstruction cons = new NfaJoinConstruction(last, (NfaOperatorConstruction)next, peek);
+                        if (_currentReElementIndex < _currentReProduction.getElementList().size() - 1) {
+                            IReElement lookahead = _currentReProduction.getElementList().get(_currentReElementIndex + 1);
+                            if (lookahead instanceof ReOpKleeneClosure || lookahead instanceof ReOpPositiveClosure || lookahead instanceof ReOpOptional)
+                                break;
+                        }
+                        INfaConstruction cons = new NfaJoinConstruction(last, (NfaOperatorConstruction) next, peek);
                         _stack.pop();
                         _stack.pop();
                         _stack.pop();
                         _stack.push(cons);
-                    }
-                    else if (((NfaOperatorConstruction) next).getReOperator() instanceof ReOpSelect) {
-                        INfaConstruction cons = new NfaSelectConstruction(last, (NfaOperatorConstruction)next, peek);
+                        matchSuccess = true;
+                    } else if (((NfaOperatorConstruction) next).getReOperator() instanceof ReOpSelect) {
+                        if (_currentReElementIndex < _currentReProduction.getElementList().size() - 1) {
+                            IReElement lookahead = _currentReProduction.getElementList().get(_currentReElementIndex + 1);
+                            if (lookahead instanceof ReOpKleeneClosure || lookahead instanceof ReOpPositiveClosure || lookahead instanceof ReOpOptional)
+                                break;
+                        }
+                        INfaConstruction cons = new NfaSelectConstruction(last, (NfaOperatorConstruction) next, peek);
                         _stack.pop();
                         _stack.pop();
                         _stack.pop();
                         _stack.push(cons);
+                        matchSuccess = true;
                     }
-                }
-                else {
-                    IReElement lookahead = _currentReProduction.getElementList().get(_currentReElementIndex + 1);
-                    if (lookahead instanceof ReOpKleeneClosure || lookahead instanceof ReOpPositiveClosure || lookahead instanceof ReOpOptional)
-                        continue;
+                } else {
+                    if (_currentReElementIndex < _currentReProduction.getElementList().size() - 1) {
+                        IReElement lookahead = _currentReProduction.getElementList().get(_currentReElementIndex + 1);
+                        if (lookahead instanceof ReOpKleeneClosure || lookahead instanceof ReOpPositiveClosure || lookahead instanceof ReOpOptional)
+                            break;
+                    }
 
-                    INfaConstruction cons = new NfaJoinConstruction(next,new NfaOperatorConstruction(new ReOpJoin()),peek);
+                    INfaConstruction cons = new NfaJoinConstruction(next, new NfaOperatorConstruction(new ReOpJoin()), peek);
                     _stack.pop();
                     _stack.pop();
                     _stack.push(cons);
+                    matchSuccess = true;
                 }
             }
+            if (!matchSuccess) break;
 
             //跳出无限循环!!!
+//            if (_currentReElementIndex == _currentReProduction.getElementList().size() - 1 && _stack.size() == 2) {
+//                peek = _stack.elementAt(_stack.size() - 1);
+//                next = _stack.elementAt(_stack.size() - 2);
+//                INfaConstruction cons = new NfaJoinConstruction(next,new NfaOperatorConstruction(new ReOpJoin()),peek);
+//                _stack.pop();
+//                _stack.pop();
+//                _stack.push(cons);
+//                break;
+//            }
         }
     }
 
