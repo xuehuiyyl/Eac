@@ -1,5 +1,6 @@
 package edu.self.eac.lexer.nfa.cons;
 
+import edu.self.eac.lexer.nfa.state.NfaState;
 import edu.self.eac.lexer.re.def.ReOperator;
 
 /**
@@ -26,5 +27,19 @@ public class NfaOperatorConstruction implements INfaConstruction {
         return this.copy();
     }
 
+    public NfaState getInitialState() {
+        return _initialState;
+    }
+
+    public NfaState getFinalState() {
+        return _finalState;
+    }
+
+    public void _createDiagram() {
+
+    }
+
     private ReOperator _operator;
+    private NfaState _initialState;
+    private NfaState _finalState;
 }

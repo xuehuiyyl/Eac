@@ -31,6 +31,10 @@ public class NfaState {
         return _type;
     }
 
+    public void setType(NfaStateType type) {
+        _type = type;
+    }
+
     private String _id;
     private NfaStateType _type;
     private HashSet<NfaEdge> _inEdgeSet;
