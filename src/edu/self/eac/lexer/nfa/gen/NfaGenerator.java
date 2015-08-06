@@ -4,6 +4,8 @@ import edu.self.eac.lexer.nfa.cons.*;
 import edu.self.eac.lexer.re.def.*;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Stack;
 
 /**
@@ -15,12 +17,19 @@ public class NfaGenerator {
         _redefinition = redefinition;
         _stack = new Stack<>();
         _constructionList = new ArrayList<>();
+        _alphabet = new Hashtable<>();
     }
 
     public ArrayList<INfaConstruction> parse() {
         _alphaSetList = _redefinition.getAlphaSetList();
         _productionList = _redefinition.getProductionList();
+
         _constructionList.clear();
+        _alphabet.clear();
+
+        for (ReAlphaSet alphaSet : _alphaSetList) {
+            _addToAlphabet(alphaSet);
+        }
 
         for (ReProduction production : _productionList) {
             INfaConstruction cons = _parseProduction(production);
@@ -30,7 +39,9 @@ public class NfaGenerator {
         return _constructionList;
     }
 
-
+    public Hashtable<String, String> getAlphabet() {
+        return _alphabet;
+    }
 
     private INfaConstruction _parseProduction(ReProduction production) {
         _stack.clear();
@@ -41,10 +52,12 @@ public class NfaGenerator {
             IReElement element = elementList.get(index);
             _currentReElementIndex = index;
             if (element instanceof ReAlpha) {
+                _addToAlphabet((ReAlpha) element);
                 construction = new NfaAlphabetConstruction((ReAlpha) element);
                 _stack.push(construction);
                 _match();
             } else if (element instanceof ReAlphaSet) {
+                _addToAlphabet((ReAlphaSet) element);
                 construction = new NfaAlphabetConstruction((ReAlphaSet) element);
                 _stack.push(construction);
                 _match();
@@ -211,6 +224,18 @@ public class NfaGenerator {
         }
     }
 
+    private void _addToAlphabet(ReAlpha alpha) {
+        if (!_alphabet.containsKey(alpha.getName())) _alphabet.put(alpha.getName(), alpha.getName());
+    }
+
+    private void _addToAlphabet(ReAlphaSet alphaSet) {
+        Hashtable<String, String> value = alphaSet.getValue();
+        for(Iterator itr = value.keySet().iterator(); itr.hasNext();){
+            String key = (String) itr.next();
+            if (!_alphabet.containsKey(key)) _alphabet.put(key, key);
+        }
+    }
+
     private Stack<INfaConstruction> _stack;
     private ReDefinition _redefinition;
     private ArrayList<ReAlphaSet> _alphaSetList;
@@ -218,4 +243,5 @@ public class NfaGenerator {
     private ArrayList<INfaConstruction> _constructionList;
     private int _currentReElementIndex;
     private ReProduction _currentReProduction;
+    private Hashtable<String, String> _alphabet;
 }

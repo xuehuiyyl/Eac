@@ -8,13 +8,15 @@ import edu.self.eac.lexer.nfa.state.NfaStateIdGenerator;
 import edu.self.eac.lexer.nfa.state.NfaStateType;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by xuehui on 15/8/6.
  */
 public class NfaDiagram {
-    public NfaDiagram(ArrayList<INfaConstruction> consList) {
+    public NfaDiagram(ArrayList<INfaConstruction> consList, Hashtable<String, String> alphabet) {
         _consList = consList;
+        _alphabet = alphabet;
         _createDiagram();
     }
 
@@ -24,6 +26,10 @@ public class NfaDiagram {
 
     public NfaState getFinalState() {
         return _finalState;
+    }
+
+    public Hashtable<String, String> getAlphabet() {
+        return _alphabet;
     }
 
     private void _createDiagram() {
@@ -46,4 +52,5 @@ public class NfaDiagram {
     private NfaState _initialState;
     private NfaState _finalState;
     private ArrayList<INfaConstruction> _consList;
+    private Hashtable<String, String> _alphabet;
 }
