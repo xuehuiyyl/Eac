@@ -21,6 +21,10 @@ public class NfaEdge {
         return _to;
     }
 
+    public INfaEdgeValue getValue() {
+        return _value;
+    }
+
     public boolean move(char alpha) {
         return !(_from == null || _to == null || _value == null) && _value.isMatch(alpha);
     }

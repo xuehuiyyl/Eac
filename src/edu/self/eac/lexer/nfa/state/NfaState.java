@@ -13,7 +13,7 @@ public class NfaState {
     public NfaState(String id, NfaStateType type) {
         _id = id;
         _type = type;
-        _inEdgeSet = new HashSet<>();
+        _inEdgeSet = new ArrayList<>();
         _outEdgeSet = new ArrayList<>();
     }
 
@@ -27,6 +27,14 @@ public class NfaState {
         return _outEdgeSet.add(edge);
     }
 
+    public ArrayList<NfaEdge> getInEdgeList() {
+        return _inEdgeSet;
+    }
+
+    public ArrayList<NfaEdge> getOutEdgeList() {
+        return _outEdgeSet;
+    }
+
     public NfaStateType getType() {
         return _type;
     }
@@ -37,6 +45,6 @@ public class NfaState {
 
     private String _id;
     private NfaStateType _type;
-    private HashSet<NfaEdge> _inEdgeSet;
+    private ArrayList<NfaEdge> _inEdgeSet;
     private ArrayList<NfaEdge> _outEdgeSet;
 }
