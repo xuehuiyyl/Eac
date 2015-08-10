@@ -17,6 +17,10 @@ public class DfaTransTable {
         return _itemList.add(item);
     }
 
+    public ArrayList<DfaTransTableItem> getItemList() {
+        return _itemList;
+    }
+
     public HashSet<NfaState> getNextStateSet(HashSet<NfaState> currentState, String inputChar) {
         for (DfaTransTableItem item : _itemList) {
             if (item.getCurrentStateSet() == currentState && item.getInputChar().equals(inputChar))

@@ -1,10 +1,12 @@
 package edu.self.eac.lexer.dfa.gen;
 
 import edu.self.eac.lexer.nfa.edge.NfaEdge;
+import edu.self.eac.lexer.nfa.edge.NfaEdgeAlphaSetValue;
 import edu.self.eac.lexer.nfa.edge.NfaEdgeEmptyValue;
 import edu.self.eac.lexer.nfa.gen.NfaDiagram;
 import edu.self.eac.lexer.nfa.state.NfaState;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
 
@@ -14,7 +16,12 @@ import java.util.Stack;
 public class DfaGenerator {
     public DfaGenerator(NfaDiagram nfaDiagram) {
         _nfaDiagram = nfaDiagram;
-        _alphabet = (String[])_nfaDiagram.getAlphabet().values().toArray();
+
+        _alphabet = new String[_nfaDiagram.getAlphabet().size()];
+        Object[] valArray = _nfaDiagram.getAlphabet().values().toArray();
+        for (int index = 0; index < _alphabet.length; ++index)
+            _alphabet[index] = valArray[index].toString();
+        //{_nfaDiagram.getAlphabet().values().toArray(String[])};
     }
 
     public DfaDiagram convert() {
@@ -32,7 +39,9 @@ public class DfaGenerator {
         workList.add(q0);
 
         while (workList.size() > 0) {
-            HashSet<NfaState> q = (HashSet<NfaState>) workList.toArray()[0];
+            HashSet<NfaState> q = (HashSet<NfaState>) workList.toArray()[workList.size() - 1];
+            workList.remove(q);
+
             for (String c : _alphabet) {
                 HashSet<NfaState> t = _calcEmptyClosureSet(_calcDeltaSet(q, c));
                 //更新转换表
@@ -45,7 +54,7 @@ public class DfaGenerator {
             }
         }
 
-        return null;
+        return new DfaDiagram(q0, _alphabet, _transTable);
     }
 
     private HashSet<NfaState> _calcEmptyClosureSet(HashSet<NfaState> nfaStateSet) {
@@ -73,7 +82,17 @@ public class DfaGenerator {
     }
 
     private HashSet<NfaState> _calcDeltaSet(HashSet<NfaState> q, String c) {
-        return null;
+        HashSet<NfaState> ret = new HashSet<>();
+        for (NfaState state : q) {
+            ArrayList<NfaEdge> outEdgeList = state.getOutEdgeList();
+            for (NfaEdge edge : outEdgeList) {
+                if (edge.getValue() instanceof NfaEdgeEmptyValue) continue;
+                NfaEdgeAlphaSetValue value = (NfaEdgeAlphaSetValue) edge.getValue();
+                if (value.isMatch(c.charAt(0)))
+                    ret.add(edge.getToState());
+            }
+        }
+        return ret;
     }
 
     private NfaDiagram _nfaDiagram;

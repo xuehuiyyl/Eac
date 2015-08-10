@@ -34,7 +34,7 @@ public class NfaDiagram {
 
     private void _createDiagram() {
         _initialState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Initial);
-        _finalState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Final);
+        //_finalState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Final);
 
         for (INfaConstruction cons : _consList) {
             NfaEdge emptyEdge1 = new NfaEdge(_initialState, cons.getInitialState(), new NfaEdgeEmptyValue());
@@ -42,10 +42,10 @@ public class NfaDiagram {
             _initialState.addOutEdge(emptyEdge1);
             cons.getInitialState().addInEdge(emptyEdge1);
 
-            NfaEdge emptyEdge2 = new NfaEdge(cons.getFinalState(),_finalState, new NfaEdgeEmptyValue());
-            cons.getFinalState().setType(NfaStateType.Normal);
-            cons.getFinalState().addOutEdge(emptyEdge2);
-            _finalState.addInEdge(emptyEdge2);
+            //NfaEdge emptyEdge2 = new NfaEdge(cons.getFinalState(),_finalState, new NfaEdgeEmptyValue());
+            //cons.getFinalState().setType(NfaStateType.Normal);
+            //cons.getFinalState().addOutEdge(emptyEdge2);
+            //_finalState.addInEdge(emptyEdge2);
         }
     }
 
