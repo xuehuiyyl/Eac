@@ -40,30 +40,47 @@ public class NfaBracketConstruction implements INfaConstruction {
     }
 
     public void _createDiagram() {
-        _initialState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Initial);
-        NfaState midState1 = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Normal);
+//        _initialState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Initial);
+//        NfaState midState1 = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Normal);
+//
+//        NfaEdge leftBracketEdge = new NfaEdge(_initialState, midState1,new NfaEdgeAlphaSetValue(new ReAlpha('(')));
+//        _initialState.addOutEdge(leftBracketEdge);
+//        midState1.addInEdge(leftBracketEdge);
+//
+//        NfaEdge emptyEdge1 = new NfaEdge(midState1, _cons.getInitialState(),new NfaEdgeEmptyValue());
+//        _cons.getInitialState().setType(NfaStateType.Normal);
+//        midState1.addOutEdge(emptyEdge1);
+//        _cons.getInitialState().addInEdge(emptyEdge1);
+//
+//        NfaState midState2 = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Normal);
+//
+//        NfaEdge emptyEdge2 = new NfaEdge(_cons.getFinalState(),midState2,new NfaEdgeEmptyValue());
+//        _cons.getFinalState().setType(NfaStateType.Normal);
+//        _cons.getFinalState().addOutEdge(emptyEdge2);
+//        midState2.addInEdge(emptyEdge2);
+//
+//        _finalState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Final);
+//
+//        NfaEdge rightBracketEdge = new NfaEdge(midState2,_finalState,new NfaEdgeAlphaSetValue(new ReAlpha(')')));
+//        midState2.addOutEdge(rightBracketEdge);
+//        _finalState.addInEdge(rightBracketEdge);
 
-        NfaEdge leftBracketEdge = new NfaEdge(_initialState, midState1,new NfaEdgeAlphaSetValue(new ReAlpha('(')));
-        _initialState.addOutEdge(leftBracketEdge);
-        midState1.addInEdge(leftBracketEdge);
+//        _initialState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Initial);
+//
+//        NfaEdge emptyEdge1 = new NfaEdge(_initialState, _cons.getInitialState(), new NfaEdgeEmptyValue());
+//        _cons.getInitialState().setType(NfaStateType.Normal);
+//        _initialState.addOutEdge(emptyEdge1);
+//        _cons.getInitialState().addInEdge(emptyEdge1);
+//
+//        _finalState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Final);
+//
+//        NfaEdge emptyEdge2 = new NfaEdge(_cons.getFinalState(), _finalState, new NfaEdgeEmptyValue());
+//        _cons.getFinalState().setType(NfaStateType.Normal);
+//        _cons.getFinalState().addOutEdge(emptyEdge2);
+//        _finalState.addInEdge(emptyEdge2);
 
-        NfaEdge emptyEdge1 = new NfaEdge(midState1, _cons.getInitialState(),new NfaEdgeEmptyValue());
-        _cons.getInitialState().setType(NfaStateType.Normal);
-        midState1.addOutEdge(emptyEdge1);
-        _cons.getInitialState().addInEdge(emptyEdge1);
-
-        NfaState midState2 = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Normal);
-
-        NfaEdge emptyEdge2 = new NfaEdge(_cons.getFinalState(),midState2,new NfaEdgeEmptyValue());
-        _cons.getFinalState().setType(NfaStateType.Normal);
-        _cons.getFinalState().addOutEdge(emptyEdge2);
-        midState2.addInEdge(emptyEdge2);
-
-        _finalState = new NfaState(NfaStateIdGenerator.getNewId(), NfaStateType.Final);
-
-        NfaEdge rightBracketEdge = new NfaEdge(midState2,_finalState,new NfaEdgeAlphaSetValue(new ReAlpha(')')));
-        midState2.addOutEdge(rightBracketEdge);
-        _finalState.addInEdge(rightBracketEdge);
+        _initialState = _cons.getInitialState();
+        _finalState = _cons.getFinalState();
     }
 
     private NfaOperatorConstruction _leftBracket;

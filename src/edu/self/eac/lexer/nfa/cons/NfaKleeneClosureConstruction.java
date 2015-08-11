@@ -44,18 +44,18 @@ public class NfaKleeneClosureConstruction implements INfaConstruction {
         _initialState.addOutEdge(emptyEdge1);
         _finalState.addInEdge(emptyEdge1);
 
-        NfaEdge emptyEdge2 = new NfaEdge(_initialState, _cons.getInitialState(),new NfaEdgeEmptyValue());
+        NfaEdge emptyEdge2 = new NfaEdge(_cons.getFinalState(), _cons.getInitialState(),new NfaEdgeEmptyValue());
+        _cons.getFinalState().setType(NfaStateType.Normal);
         _cons.getInitialState().setType(NfaStateType.Normal);
-        _initialState.addOutEdge(emptyEdge2);
+        _cons.getFinalState().addOutEdge(emptyEdge2);
         _cons.getInitialState().addInEdge(emptyEdge2);
 
         NfaEdge emptyEdge3 = new NfaEdge(_cons.getFinalState(),_finalState,new NfaEdgeEmptyValue());
-        _cons.getFinalState().setType(NfaStateType.Normal);
         _cons.getFinalState().addOutEdge(emptyEdge3);
         _finalState.addInEdge(emptyEdge3);
 
-        NfaEdge emptyEdge4 = new NfaEdge(_cons.getFinalState(), _cons.getInitialState(),new NfaEdgeEmptyValue());
-        _cons.getFinalState().addOutEdge(emptyEdge4);
+        NfaEdge emptyEdge4 = new NfaEdge(_initialState, _cons.getInitialState(),new NfaEdgeEmptyValue());
+        _initialState.addOutEdge(emptyEdge4);
         _cons.getInitialState().addInEdge(emptyEdge4);
     }
 
