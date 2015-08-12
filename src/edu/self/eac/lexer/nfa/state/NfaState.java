@@ -27,6 +27,10 @@ public class NfaState {
         return _outEdgeSet.add(edge);
     }
 
+    public String getId(){
+        return _id;
+    }
+
     public ArrayList<NfaEdge> getInEdgeList() {
         return _inEdgeSet;
     }

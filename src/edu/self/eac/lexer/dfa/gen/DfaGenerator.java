@@ -45,7 +45,8 @@ public class DfaGenerator {
             for (String c : _alphabet) {
                 HashSet<NfaState> t = _calcEmptyClosureSet(_calcDeltaSet(q, c));
                 //更新转换表
-                _transTable.addItem(new DfaTransTableItem(q, c, t));
+                if (t.size() > 0)
+                    _transTable.addItem(new DfaTransTableItem(q, c, t));
 
                 if (!Q.contains(t)) {
                     Q.add(t);

@@ -4,6 +4,7 @@ import edu.self.eac.lexer.nfa.state.NfaState;
 import edu.self.eac.lexer.nfa.state.NfaStateType;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Created by xuehui on 15/8/6.
@@ -22,7 +23,8 @@ public class DfaDiagram {
             if (_inAlphabet(ch)) return false;
 
             for (DfaTransTableItem item : _transTable.getItemList()) {
-                if (item.getCurrentStateSet() == currStateSet && item.getInputChar().indexOf(0) == ch) {
+                char ich = item.getInputChar().charAt(0);
+                if (_isEqualSet(item.getCurrentStateSet(), currStateSet) && ich == ch) {
                     currStateSet = item.getNextStateSet();
                     break;
                 }
@@ -33,7 +35,7 @@ public class DfaDiagram {
 
     private boolean _inAlphabet(char ch) {
         for (String str : _alphabet) {
-            if (str.indexOf(0) == ch) return true;
+            if (str.charAt(0) == ch) return true;
         }
         return false;
     }
@@ -42,6 +44,26 @@ public class DfaDiagram {
         for (NfaState state : stateSet) {
             if (state.getType() == NfaStateType.Final)
                 return true;
+        }
+        return false;
+    }
+
+    private boolean _isEqualSet(HashSet<NfaState> set1, HashSet<NfaState> set2) {
+        if (set1.size()==set2.size()){
+            Iterator<NfaState> iterator1 = set1.iterator();
+            int in = 0;
+            while(iterator1.hasNext()){
+                NfaState state1 = iterator1.next();
+                Iterator<NfaState> iterator2 = set2.iterator();
+                while(iterator2.hasNext()) {
+                    NfaState state2 = iterator2.next();
+                    if (state1.getId().equals(state2.getId())){
+                        ++in;
+                        break;
+                    }
+                }
+            }
+            if (set1.size() == in)return true;
         }
         return false;
     }

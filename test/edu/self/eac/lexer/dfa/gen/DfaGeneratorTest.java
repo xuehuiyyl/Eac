@@ -21,7 +21,7 @@ public class DfaGeneratorTest {
 
     @Test
     public void testConvert() throws Exception {
-        String filePath = "./test/edu/self/eac/lexer/re/gen/re1.txt";
+        String filePath = "./test/edu/self/eac/lexer/re/gen/re.txt";
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 new FileInputStream(filePath)));
 
@@ -35,7 +35,7 @@ public class DfaGeneratorTest {
         DfaGenerator dgen = new DfaGenerator(nfaDiagram);
         DfaDiagram dfaDiagram = dgen.convert();
 
-        if (dfaDiagram.match("ab"))
+        if (dfaDiagram.match("abaa"))
             System.out.print("Match");
         else
             System.out.print("Not match");
