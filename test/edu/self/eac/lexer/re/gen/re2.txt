@@ -1,0 +1,3 @@
+letter [a-zA-Z]
+digit [0-9]
+pro1 aba*

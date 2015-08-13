@@ -20,7 +20,7 @@ public class DfaDiagram {
         HashSet<NfaState> currStateSet = _initialStateSet;
         for (int index = 0; index < str.length(); ++index) {
             char ch = str.charAt(index);
-            if (_inAlphabet(ch)) return false;
+            if (!_inAlphabet(ch)) return false;
 
             for (DfaTransTableItem item : _transTable.getItemList()) {
                 char ich = item.getInputChar().charAt(0);

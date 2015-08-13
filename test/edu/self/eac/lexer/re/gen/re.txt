@@ -1,4 +1,4 @@
 letter [a-zA-Z]
 digit [0-9]
 pro1 {letter}[a-z]a(a(b|c)*d?)+
-pro2 {digit}*((a|b)*(cd(e|f)*)*)
+pro2 {digit}*(a|b)*(cd(e|f)*)*

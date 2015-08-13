@@ -35,7 +35,7 @@ public class DfaGeneratorTest {
         DfaGenerator dgen = new DfaGenerator(nfaDiagram);
         DfaDiagram dfaDiagram = dgen.convert();
 
-        if (dfaDiagram.match("abaa"))
+        if (dfaDiagram.match("0123abbacdeefcdcdff"))
             System.out.print("Match");
         else
             System.out.print("Not match");
